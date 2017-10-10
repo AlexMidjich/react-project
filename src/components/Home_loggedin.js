@@ -59,6 +59,10 @@ class Home_loggedin extends Component {
    });
   });
  }
+ removeItem(itemID){
+  const commentsRef = firebase.database().ref(`/comments/${itemID}`);
+  commentsRef.remove();
+ }
 
  render() {
   return(
@@ -77,7 +81,12 @@ class Home_loggedin extends Component {
        {this.state.comments.map((item) => {
         return(
          <li key={item.id}>
-          <p><strong>{item.userID}:</strong> {item.text}</p>
+          <div className="comment-txt">
+           <p><strong>{item.userID}:</strong> {item.text}</p>
+          </div>
+          <div className="comment-btnfield">
+           <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>
+          </div>
          </li>
         )
        })}

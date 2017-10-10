@@ -21,6 +21,7 @@
  color: #f6f6f6;
  margin-top: 10px;
  font-size: 18px;
+ cursor: pointer;
 }
 
 .btn-log-in:hover{

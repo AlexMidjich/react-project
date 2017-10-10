@@ -1,0 +1,28 @@
+.home {
+ background-color: #ffffff;
+ color: #333333;
+ width: 70%;
+ height: 80vh;
+ display: flex;
+ align-items: center;
+ flex-direction: column;
+}
+
+.login-form {
+ display: flex;
+ flex-direction: column;
+}
+
+.btn-log-in {
+ border: none;
+ border-radius: 5%;
+ padding: 10px;
+ background-color: rgba(3, 3, 3, 0.5);
+ color: #f6f6f6;
+ margin-top: 10px;
+ font-size: 18px;
+}
+
+.btn-log-in:hover{
+ background-color: #000000;
+}

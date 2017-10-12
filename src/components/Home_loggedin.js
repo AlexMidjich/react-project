@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import firebase from '../firebase'
+import { connect } from 'react-redux';
+import { addComment, removeComment } from '../actions/action';
 import '../styles/App.css';
 import '../styles/home.css';
 import '../styles/home_loggedin.css';

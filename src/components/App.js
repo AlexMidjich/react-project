@@ -1,30 +1,40 @@
 import React, { Component } from 'react';
 import Header from './Header';
 import Home from './Home';
-import Home_loggedin from './Home_loggedin'
+import HomeLoggedIn from './HomeLoggedIn'
+import firebase from '../firebase';
 import '../styles/App.css';
 
 class App extends Component {
   constructor() {
    super();
    this.state = {
-    logged_in: false,
-    userName: '',
-    password: ''
+    email: '',
+    password: '',
+    user: ''
    };
  }
 
+ componentDidMount() {
+  firebase.auth().onAuthStateChanged(user => {
+   if(user){
+    this.setState({user: user});
+   }else{
+    this.setState({user: ''});
+   }
+  })
+ }
+
 //Method for changing login status
- onChangeStatus(newStatus){
-  this.setState({
-   logged_in: newStatus,
-  });
+ onSignIn(newStatus){
+  firebase.auth()
+  .signInWithEmailAndPassword(this.state.email, this.state.password)
  };
 
 //Method for getting the user inputed username
  onHandleUser(e){
   this.setState({
-   userName: e.target.value
+   email: e.target.value
   });
  }
 
@@ -35,18 +45,25 @@ class App extends Component {
   });
  }
 
+ onRegister(e){
+  e.preventDefault();
+  firebase.auth()
+   .createUserWithEmailAndPassword(this.state.email, this.state.password);
+   console.log('Register');
+ }
+
   render() {
     return (
       <div>
         <Header />
-        {this.state.logged_in /*&& this.state.password === 'password'*/  ?
-        <Home_loggedin
-         changeStatus={this.onChangeStatus.bind(this)}
-         user={this.state.userName}
+        {this.state.user ?
+        <HomeLoggedIn
+         user={this.state.user && this.state.user.email }
         />
         :
         <Home
-         changeStatus={this.onChangeStatus.bind(this)}
+         register={this.onRegister.bind(this)}
+         signIn={this.onSignIn.bind(this)}
          handleChange={this.onHandleUser.bind(this)}
          handlePassword={this.onHandlePassword.bind(this)}
         />

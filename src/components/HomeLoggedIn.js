@@ -2,25 +2,24 @@ import React, { Component } from 'react';
 import firebase from '../firebase'
 import '../styles/App.css';
 import '../styles/home.css';
-import '../styles/home_loggedin.css';
+import '../styles/homeLoggedIn.css';
 
-class Home_loggedin extends Component {
+class HomeLoggedIn extends Component {
  constructor(props){
   super();
   this.state = {
-   newStatus: false,
-   userName: props.user,
+   user: props.user,
    comment: '',
    comments: []
   };
   //Binding my methods to the contstructor
-  this.onChangeLogOut = this.onChangeLogOut.bind(this);
+  this.onSignOut = this.onSignOut.bind(this);
   this.handleComment = this.handleComment.bind(this);
   this.handleSubmit = this.handleSubmit.bind(this);
  }
 
- onChangeLogOut(){ //Method that changes the logged in status to false and redirects the user to Home component instead.
-  this.props.changeStatus(this.state.newStatus);
+ onSignOut(){ //Method that signs out the user.
+  firebase.auth().signOut()
  }
 
  handleComment(e) { //Method for storing the user inputed data from the textarea field in to my state
@@ -33,12 +32,12 @@ class Home_loggedin extends Component {
   const commentsRef = firebase.database().ref('comments'); //Call the 'ref' method to store the comment in firebase
   const item = {
    text: this.state.comment,
-   userID: this.state.userName
+   userID: this.state.email
   }
   commentsRef.push(item);
   this.setState({ //This clears the commentfields but keep track on the user
    comment: '',
-   userName: this.state.userName
+   email: this.state.email
   });
  }
 
@@ -69,11 +68,11 @@ class Home_loggedin extends Component {
    <div className="content">
     <div className="home">
      <div className="logged_in_header">
-      <h2>Välkommen {this.state.userName}</h2>
+      <h2>Du är inloggad som: {this.state.user}</h2>
       <button
-          onClick={this.onChangeLogOut.bind(this)}
+          onClick={this.onSignOut.bind(this)}
           className="btn-log-out"
-      ><i class="fa fa-sign-out" aria-hidden="true"></i>
+      ><i className="fa fa-sign-out" aria-hidden="true"></i>
       </button>
      </div>
      <section className='display-comment'>
@@ -85,7 +84,7 @@ class Home_loggedin extends Component {
            <p><strong>{item.userID}:</strong> {item.text}</p>
           </div>
           <div className="comment-btnfield">
-           <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>
+           <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button>
           </div>
          </li>
         )
@@ -110,4 +109,4 @@ class Home_loggedin extends Component {
  }
 }
 
-export default Home_loggedin;
+export default HomeLoggedIn;

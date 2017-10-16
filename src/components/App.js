@@ -11,7 +11,8 @@ class App extends Component {
    this.state = {
     email: '',
     password: '',
-    user: ''
+    user: '',
+    error: ''
    };
  }
 
@@ -27,8 +28,13 @@ class App extends Component {
 
 //Method for changing login status
  onSignIn(newStatus){
+  if(this.state.email === ''){
+   this.setState({error: 'Du glömde skriva in en e-post adress!'})
+  }else{
   firebase.auth()
   .signInWithEmailAndPassword(this.state.email, this.state.password)
+  this.setState({error: ''})
+ }
  };
 
 //Method for getting the user inputed username
@@ -66,6 +72,7 @@ class App extends Component {
          signIn={this.onSignIn.bind(this)}
          handleChange={this.onHandleUser.bind(this)}
          handlePassword={this.onHandlePassword.bind(this)}
+         error={this.state.error}
         />
         }
       </div>

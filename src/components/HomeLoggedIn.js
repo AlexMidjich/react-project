@@ -10,7 +10,8 @@ class HomeLoggedIn extends Component {
   this.state = {
    user: props.user,
    comment: '',
-   comments: []
+   comments: [],
+   books: []
   };
   //Binding my methods to the contstructor
   this.onSignOut = this.onSignOut.bind(this);
@@ -63,7 +64,47 @@ class HomeLoggedIn extends Component {
   commentsRef.remove();
  }
 
+fetchFromApi = () => {
+ fetch('https://www.googleapis.com/books/v1/volumes?q=the+fires+of+heaven')
+  .then(response => response.json())
+  .then(data => {
+   //console.log(data);
+   this.setState({books: data.items})
+  })
+ }
+
  render() {
+  //Looping/maping through data from the api that I stored in the state 'books'
+  const bookList = this.state.books.map((book) => {
+   return (
+    <div className="bookField">
+     <ul className="books">
+      <li key={book.id}>
+       <h4>Title: </h4>
+        <p>{book.volumeInfo.title}</p>
+       <h4>Author: </h4>
+        <p>{book.volumeInfo.authors}</p>
+       <img src="http://books.google.com/books/content?id=xgFZ63O2gdUC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api" alt="book cover"/>
+      </li>
+     </ul>
+    </div>
+   )
+  })
+  //Looping/maping through comments that is stored in the state 'comments'
+  const commentList = this.state.comments.map((item) => {
+   return(
+    <ul className="comments">
+     <li key={item.id} className="commentsList">
+      <div className="comment-txt">
+       <p><strong>{item.userID}:</strong> {item.text}</p>
+      </div>
+      <div className="comment-btnfield">
+       <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button>
+      </div>
+     </li>
+    </ul>
+   )
+  })
   return(
    <div className="content">
     <div className="home">
@@ -75,21 +116,11 @@ class HomeLoggedIn extends Component {
       ><i className="fa fa-sign-out" aria-hidden="true"></i>
       </button>
      </div>
+     <section className="display-book">
+      {bookList[0]}
+     </section>
      <section className='display-comment'>
-      <ul>
-       {this.state.comments.map((item) => {
-        return(
-         <li key={item.id}>
-          <div className="comment-txt">
-           <p><strong>{item.userID}:</strong> {item.text}</p>
-          </div>
-          <div className="comment-btnfield">
-           <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button>
-          </div>
-         </li>
-        )
-       })}
-      </ul>
+      {commentList}
      </section>
      <div className="comment-field">
       <form onSubmit={this.handleSubmit}>
@@ -103,6 +134,7 @@ class HomeLoggedIn extends Component {
       </form>
      </div>
      <hr />
+     <button onClick={this.fetchFromApi} > API </button>
     </div>
    </div>
   )

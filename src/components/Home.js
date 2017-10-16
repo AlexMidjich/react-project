@@ -13,6 +13,7 @@ class Home extends Component {
      <p>Registerar dig med en ny användare eller Logga in för att komma igång med din bokcirkel.</p>
      <div className="sign-in-box">
       <form className="login-form" onSubmit={this.props.register}>
+       <strong>{this.props.error}</strong>
        <input
         type="text"
         name="email"
@@ -30,8 +31,8 @@ class Home extends Component {
         className="userinputs"
        />
        <input type="submit" value="Registrera" className="btn-log-in"/>
-       <button onClick={this.props.signIn} className="btn-log-in">Logga in <i className="fa fa-sign-in" aria-hidden="true"></i></button>
       </form>
+       <button onClick={this.props.signIn} className="btn-log-in">Logga in <i className="fa fa-sign-in" aria-hidden="true"></i></button>
      </div>
     </div>
    </div>

@@ -93,6 +93,8 @@ export function userChanged(){
  }
 }
 
+//Managing userdata in adminpanel
+
 export function removeUserdata(userdata){
   return function (dispatch){
     firebase.database().ref(`users/${userdata.key}`).remove()
@@ -100,19 +102,16 @@ export function removeUserdata(userdata){
 }
 export function toggleAdmin(userdata){
   return function (dispatch){
-    // We can set just a part of an object, like the completed property on
-    // just one item. Go to the path of the resource and change the value
     firebase.database().ref(`users/${userdata.key}/isAdmin`).set(!userdata.isAdmin)
   }
 }
 
 export function fetchUsers(){
   return function(dispatch){
-    return firebase.database().ref(`users`).on('value', user => {
-        //console.log(user.val());
+    return firebase.database().ref(`users`).on('value', userdata => {
         let tempList = [];
-        user.forEach(user => {
-          tempList.push({...user.val(), key: user.key});
+        userdata.forEach(userdata => {
+          tempList.push({...userdata.val(), key: userdata.key});
         })
         dispatch({ type: "FETCH_ALL_USERS", user: tempList });
     })

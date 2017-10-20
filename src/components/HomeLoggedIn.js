@@ -14,8 +14,6 @@ class HomeLoggedIn extends Component {
    books: [],
    toggleComments: true,
    toggleLike: true,
-   userinfo: '',
-   favorite: []
  }
 
  componentDidMount(){
@@ -69,7 +67,6 @@ class HomeLoggedIn extends Component {
  onChange = e => this.setState({ [e.target.name]: e.target.value})
 
  render() {
-  //console.log(this.props.user);
   //Looping/maping through data from the api that I stored in the state 'books'
   const bookList = this.state.books.map((book) => {
    return (
@@ -90,7 +87,6 @@ class HomeLoggedIn extends Component {
     </div>
    )
   })
-  //console.log(this.props.userBooks);
   const favoriteList = this.props.userBooks.map(userBook =>
    userBook.userID === this.props.user.email ?
     <div key={userBook.key} className="likedbooks">
@@ -110,6 +106,7 @@ class HomeLoggedIn extends Component {
    <section className="content">
     <section className="home">
      <section className="display-book">
+      <h2>Periodens bok</h2>
       {bookList[0]}
       <div className="menufield">
        {likebtn}
@@ -121,17 +118,15 @@ class HomeLoggedIn extends Component {
         null
         :
         this.props.comments.map(comment =>
-          <ul className="comments">
-           <li key={comment.key} className="commentsList">
+          <div key={comment.key} className="commentsList">
            <div className="comment-txt">
              <p><strong>{comment.userID}:</strong> {comment.text}</p>
             </div>
             <div className="comment-btnfield">
-             {comment.userID === this.props.user.email ? //A ternary that checks if the user that posted the comments is the same as the one thats logged in, if so the user can remove his item.
+             {comment.userID === this.props.user.email || this.props.user.isAdmin ? //A ternary that checks if the user that posted the comments is the same as the one thats logged in, if so the user can remove his item.
              <button onClick={() => this.remove(comment)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button> : null}
             </div>
-           </li>
-          </ul>
+           </div>
          )}
         {this.state.toggleComments ?
         null

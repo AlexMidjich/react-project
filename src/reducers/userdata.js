@@ -1,7 +1,6 @@
 export default function userdata(state = [], action) {
  switch(action.type){
   case "FETCH_ALL_USERS":
-    //Don't need to manipulate the state, just return the whole array of objects!
     return action.user;
   case "CHILD_REMOVED":
     return state.filter(userdata => userdata.key !== action.userdata.key)

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Header from './Header';
 import Home from './Home';
-import HomeLoggedIn from './HomeLoggedIn'
+import HomeLoggedIn from './HomeLoggedIn';
+import Footer from './Footer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/action';
@@ -10,12 +11,10 @@ import '../styles/App.css';
 
 class App extends Component {
  state = {
-    userData: this.props.user,
     email: '',
     password: '',
     error: ''
    }
-
 
  componentDidMount() {
   this.props.userChanged();
@@ -61,7 +60,6 @@ class App extends Component {
  }
 
   render() {
-   //console.log(this.props.user);
     return (
       <div>
         <Header />
@@ -78,6 +76,9 @@ class App extends Component {
          error={this.state.error}
         />
         }
+        <div className="footercontent">
+         <Footer />
+        </div>
       </div>
     );
   }

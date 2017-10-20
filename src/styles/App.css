@@ -5,3 +5,9 @@
  justify-content: center;
  flex-direction: row;
 }
+
+.footercontent{
+ display: flex;
+ align-items: flex-end;
+ justify-content: flex-end;
+}

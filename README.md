@@ -24,3 +24,5 @@
 
 <h3>Usage and Demo</h3>
 <p>Feel free to try the application. You can create your own user to check out the "normal" view. You can also use the admin log-in: User: admin@admin.se, Password: iamadmin - As a admin user you will see a admin panel, you can remove other users, delete other users comments and change status to admin for other users.</p>
+
+<p>Visit my application on <a href="http://www.midjich.com/bokcirkeln">www.midjich.com/bokcirkeln</p>

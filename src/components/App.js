@@ -2,28 +2,23 @@ import React, { Component } from 'react';
 import Header from './Header';
 import Home from './Home';
 import HomeLoggedIn from './HomeLoggedIn'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../actions/action';
 import firebase from '../firebase';
 import '../styles/App.css';
 
 class App extends Component {
-  constructor() {
-   super();
-   this.state = {
+ state = {
+    userData: this.props.user,
     email: '',
     password: '',
-    user: '',
     error: ''
-   };
- }
+   }
+
 
  componentDidMount() {
-  firebase.auth().onAuthStateChanged(user => {
-   if(user){
-    this.setState({user: user});
-   }else{
-    this.setState({user: ''});
-   }
-  })
+  this.props.userChanged();
  }
 
 //Method for changing login status
@@ -54,17 +49,25 @@ class App extends Component {
  onRegister(e){
   e.preventDefault();
   firebase.auth()
-   .createUserWithEmailAndPassword(this.state.email, this.state.password);
+   .createUserWithEmailAndPassword(this.state.email, this.state.password)
+   .then(user => {
+    const newUser = {
+     email: user.email,
+     isAdmin: false
+    }
+    firebase.database().ref(`users/${user.uid}`).set(newUser);
+   });
    console.log('Register');
  }
 
   render() {
+   //console.log(this.props.user);
     return (
       <div>
         <Header />
-        {this.state.user ?
+        {this.props.user ?
         <HomeLoggedIn
-         user={this.state.user && this.state.user.email }
+         userInfo={this.state.user && this.state.user.email }
         />
         :
         <Home
@@ -80,4 +83,15 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapDispatchToProps(dispatch){
+ return bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state){
+ return {
+   user: state.user
+ }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

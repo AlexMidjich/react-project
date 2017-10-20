@@ -1,8 +1,15 @@
+.profilespace {
+ width: 30%;
+}
 .logged_in_header{
+ width: 100%;
  display: flex;
  flex-direction: row;
- justify-content: center;
  align-items: center;
+}
+.logged_in_header h2 {
+ font-size: 20px;
+ padding-right: 10px;
 }
 .btn-log-out {
  border: none;
@@ -18,31 +25,82 @@
 .btn-log-out:hover{
  background-color: #000000;
 }
+.menufield{
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+.div-round {
+ background-color: rgba(136, 179, 255, 1.0);
+ color: #f6f6f6;
+ width: 40px;
+ height: 40px;
+ border-radius: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 20px;
+ margin-right: 10px;
+}
+.btn-round {
+ border: none;
+ border-radius: 100%;
+ width: 40px;
+ height: 40px;
+ background-color: rgba(136, 179, 255, 1.0);
+ color: #f6f6f6;
+ font-size: 20px;
+ margin-left: 15px;
+ cursor: pointer;
+ margin: 10px;
+}
+.btn-round-like {
+ border: none;
+ border-radius: 100%;
+ width: 40px;
+ height: 40px;
+ background-color: rgba(136, 179, 255, 1.0);
+ color: #EA88FF;
+ font-size: 20px;
+ margin-left: 15px;
+ cursor: pointer;
+ margin: 10px;
+}
 
 /*Styling for books*/
 .display-book{
- width: 100%;
+ width: 50%;
  height: auto;
- display: flex;
- flex-direction: column;
- align-items: center;
+ padding-bottom: 15px;
+ padding-top: 15px;
 }
 .bookField{
- width: 50%;
+ width: 100%;
  height: auto;
 }
 .books{
  display: flex;
- flex-direction: row;
- width: 50%;
+ flex-direction: column;
+ width: 100%;
  margin: 0px;
  padding: 0px;
 }
 
 .books li{
  display: flex;
- flex-direction: column;
+ flex-direction: row;
  padding-left: 0px;
+
+}
+.book-info {
+ display: flex;
+ flex-direction: column;
+ padding-left: 20px;
+}
+.data {
+ display: flex;
+ flex-direction: row;
+ align-items: center;
 }
 
 /*Styling for comments*/
@@ -125,4 +183,35 @@ li{
 }
 .btn-remove:hover{
  color: red;
+}
+
+.likedbooks{
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+
+.userlistWrapper{
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+
+.userlist{
+ display: flex;
+ flex-direction: column;
+ justify-content: flex-start;
+ align-items: flex-start;
+}
+
+.btn-remove-user {
+ border: none;
+ border-radius: 100%;
+ width: 40px;
+ height: 40px;
+ background-color: transparent;
+ color: red;
+ font-size: 20px;
+ margin-left: 15px;
+ cursor: pointer;
 }

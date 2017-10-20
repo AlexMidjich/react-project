@@ -1,144 +1,175 @@
 import React, { Component } from 'react';
+import UserPage from './UserPage'
 import firebase from '../firebase'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../actions/action';
 import '../styles/App.css';
 import '../styles/home.css';
 import '../styles/homeLoggedIn.css';
 
 class HomeLoggedIn extends Component {
- constructor(props){
-  super();
-  this.state = {
-   user: props.user,
-   comment: '',
-   comments: [],
-   books: []
-  };
-  //Binding my methods to the contstructor
-  this.onSignOut = this.onSignOut.bind(this);
-  this.handleComment = this.handleComment.bind(this);
-  this.handleSubmit = this.handleSubmit.bind(this);
- }
-
- onSignOut(){ //Method that signs out the user.
-  firebase.auth().signOut()
- }
-
- handleComment(e) { //Method for storing the user inputed data from the textarea field in to my state
-  this.setState({
-   [e.target.name]: e.target.value
-  });
- }
- handleSubmit(e) {//Method for storing data from the app to my database when the user press 'Lägg till kommentar'
-  e.preventDefault();
-  const commentsRef = firebase.database().ref('comments'); //Call the 'ref' method to store the comment in firebase
-  const item = {
-   text: this.state.comment,
-   userID: this.state.email
-  }
-  commentsRef.push(item);
-  this.setState({ //This clears the commentfields but keep track on the user
-   comment: '',
-   email: this.state.email
-  });
+ state ={
+   value: "",
+   books: [],
+   toggleComments: true,
+   toggleLike: true,
+   userinfo: '',
+   favorite: []
  }
 
  componentDidMount(){
-  const commentsRef = firebase.database().ref('comments');
-  commentsRef.on('value', (snapshot) => {
-   let comments = snapshot.val();
-   let newState = [];
-   for(let item in comments) {
-    newState.push({
-     id: item,
-     text: comments[item].text,
-     userID: comments[item].userID
-    });
+  this.props.fetchComments();
+  this.props.fetchBooks();
+  // this.props.addBookListener();
+  // this.props.removeBookListener();
+
+  fetch('https://www.googleapis.com/books/v1/volumes?q=dawn+of+the+jedi')
+   .then(response => response.json())
+   .then(data => {
+    this.setState({books: data.items})
+   })
+  }
+  //Method that signs out the user.
+   onSignOut(){
+    firebase.auth().signOut()
    }
-   this.setState({
-    comments: newState
-   });
-  });
+
+ onToggleComment = () => {
+  this.setState({ toggleComments: !this.state.toggleComments })
+  console.log(this.state.toggleComments);
+ };
+
+ like = () => {
+  this.props.addBook({
+   LikeBook: this.state.books[0].volumeInfo.title,
+   userID: this.props.user.email
+  })
+  this.setState({ toggleLike: !this.state.toggleLike })
  }
- removeItem(itemID){
-  const commentsRef = firebase.database().ref(`/comments/${itemID}`);
-  commentsRef.remove();
+ dislike(userBook) {
+   this.props.removeBook(userBook);
+   this.setState({ toggleLike: !this.state.toggleLike })
  }
 
-fetchFromApi = () => {
- fetch('https://www.googleapis.com/books/v1/volumes?q=the+fires+of+heaven')
-  .then(response => response.json())
-  .then(data => {
-   //console.log(data);
-   this.setState({books: data.items})
+//Function that ads the users comment to the database together with the users email.
+ add = (e) => {
+  e.preventDefault();
+  this.props.addComment({
+    text: this.state.value,
+    userID: this.props.user.email
   })
+  this.setState({value: ''});
  }
+
+ remove = (comment) => {
+   this.props.removeComment(comment);
+ }
+
+ onChange = e => this.setState({ [e.target.name]: e.target.value})
 
  render() {
+  //console.log(this.props.user);
   //Looping/maping through data from the api that I stored in the state 'books'
   const bookList = this.state.books.map((book) => {
    return (
     <div className="bookField">
      <ul className="books">
       <li key={book.id}>
-       <h4>Title: </h4>
-        <p>{book.volumeInfo.title}</p>
-       <h4>Author: </h4>
-        <p>{book.volumeInfo.authors}</p>
-       <img src="http://books.google.com/books/content?id=xgFZ63O2gdUC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api" alt="book cover"/>
+       <img src="http://books.google.com/books/content?id=bQkRoWzH3aUC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api" alt="book cover"/>
+       <div className="book-info">
+        <div className="data">
+          <p><strong>Titel:</strong> {book.volumeInfo.title}</p>
+        </div>
+        <div className="data">
+          <p><strong>Skriven av:</strong> {book.volumeInfo.authors}</p>
+        </div>
+       </div>
       </li>
      </ul>
     </div>
    )
   })
-  //Looping/maping through comments that is stored in the state 'comments'
-  const commentList = this.state.comments.map((item) => {
-   return(
-    <ul className="comments">
-     <li key={item.id} className="commentsList">
-      <div className="comment-txt">
-       <p><strong>{item.userID}:</strong> {item.text}</p>
-      </div>
-      <div className="comment-btnfield">
-       <button onClick={() => this.removeItem(item.id)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button>
-      </div>
-     </li>
-    </ul>
-   )
-  })
+  //console.log(this.props.userBooks);
+  const favoriteList = this.props.userBooks.map(userBook =>
+   userBook.userID === this.props.user.email ?
+    <div key={userBook.key} className="likedbooks">
+      <button className="btn-round-like" onClick={() => this.dislike(userBook)}><i className="fa fa-heart" aria-hidden="true"></i></button>
+      <p>{userBook.LikeBook}</p>
+    </div>
+    :
+    null
+  );
+  // This prints out the like button for the books.
+  const likebtn = this.state.toggleLike ?
+   <button className="btn-round" onClick= { this.like }><i className="fa fa-heart" aria-hidden="true"></i></button>
+  :
+   null
+
   return(
-   <div className="content">
-    <div className="home">
-     <div className="logged_in_header">
-      <h2>Du är inloggad som: {this.state.user}</h2>
-      <button
-          onClick={this.onSignOut.bind(this)}
-          className="btn-log-out"
-      ><i className="fa fa-sign-out" aria-hidden="true"></i>
-      </button>
-     </div>
+   <section className="content">
+    <section className="home">
      <section className="display-book">
       {bookList[0]}
+      <div className="menufield">
+       {likebtn}
+       <button className="btn-round" onClick={ this.onToggleComment }><i className="fa fa-comment" aria-hidden="true"></i></button>
+      </div>
      </section>
      <section className='display-comment'>
-      {commentList}
+     {this.state.toggleComments ?
+        null
+        :
+        this.props.comments.map(comment =>
+          <ul className="comments">
+           <li key={comment.key} className="commentsList">
+           <div className="comment-txt">
+             <p><strong>{comment.userID}:</strong> {comment.text}</p>
+            </div>
+            <div className="comment-btnfield">
+             {comment.userID === this.props.user.email ? //A ternary that checks if the user that posted the comments is the same as the one thats logged in, if so the user can remove his item.
+             <button onClick={() => this.remove(comment)} className="btn-remove"><i className="fa fa-times" aria-hidden="true"></i></button> : null}
+            </div>
+           </li>
+          </ul>
+         )}
+        {this.state.toggleComments ?
+        null
+        :
+        <div className="comment-field">
+         <form onSubmit={this.handleSubmit}>
+          <input
+           type="text"
+           name="value"
+           placeholder="Skriv en kommentar"
+           onChange={this.onChange}
+           value={this.state.value}
+          />
+          <button className="btn-add-comment" onClick={this.add}>Lägg till kommentar</button>
+         </form>
+        </div>}
      </section>
-     <div className="comment-field">
-      <form onSubmit={this.handleSubmit}>
-       <input
-        type="text"
-        name="comment"
-        placeholder="Skriv en kommentar"
-        onChange={this.handleComment} value={this.state.comment}
-       />
-       <button className="btn-add-comment">Lägg till kommentar</button>
-      </form>
-     </div>
-     <hr />
-     <button onClick={this.fetchFromApi} > API </button>
-    </div>
-   </div>
+    </section>
+    <section className="profilespace">
+     <UserPage value={favoriteList}/>
+    </section>
+   </section>
   )
  }
 }
 
-export default HomeLoggedIn;
+function mapDispatchToProps(dispatch){
+ return bindActionCreators(actions, dispatch)
+}
+
+const mapStateToProps = state =>{
+ return {
+   comments: state.comments,
+   userBooks: state.userBooks,
+   user: state.user,
+   error: state.error
+ }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeLoggedIn);

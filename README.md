@@ -18,3 +18,11 @@
 
 <h3>The app</h3>
 <p>The application I have created is something I call "Bokcirkeln". Basicly when you log in you will be able to get sugestions on books you can read and to leave a review or comment on the book. All the comments will be stored to your username. You will also be able to delete your own comments.</p>
+
+<h4>The app v1.0</h4>
+<p>This is the first version of the app, in this version the user wont be able to search on different books and you will only be able to log in with email and password authentication. In future version I will fix a search function to display other books and also fix authentication with google and facebook. </p>
+
+<h3>Usage and Demo</h3>
+<p>Feel free to try the application. You can create your own user to check out the "normal" view. You can also use the admin log-in: User: admin@admin.se, Password: iamadmin - As a admin user you will see a admin panel, you can remove other users, delete other users comments and change status to admin for other users.</p>
+
+<p>Visit my application on <a href="http://www.midjich.com/bokcirkeln">www.midjich.com/bokcirkeln</p>

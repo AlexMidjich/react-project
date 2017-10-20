@@ -1,30 +1,40 @@
 import React, { Component } from 'react';
 import Header from './Header';
 import Home from './Home';
-import Home_loggedin from './Home_loggedin'
+import HomeLoggedIn from './HomeLoggedIn';
+import Footer from './Footer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../actions/action';
+import firebase from '../firebase';
 import '../styles/App.css';
 
 class App extends Component {
-  constructor() {
-   super();
-   this.state = {
-    logged_in: false,
-    userName: '',
-    password: ''
-   };
+ state = {
+    email: '',
+    password: '',
+    error: ''
+   }
+
+ componentDidMount() {
+  this.props.userChanged();
  }
 
 //Method for changing login status
- onChangeStatus(newStatus){
-  this.setState({
-   logged_in: newStatus,
-  });
+ onSignIn(newStatus){
+  if(this.state.email === ''){
+   this.setState({error: 'Du glömde skriva in en e-post adress!'})
+  }else{
+  firebase.auth()
+  .signInWithEmailAndPassword(this.state.email, this.state.password)
+  this.setState({error: ''})
+ }
  };
 
 //Method for getting the user inputed username
  onHandleUser(e){
   this.setState({
-   userName: e.target.value
+   email: e.target.value
   });
  }
 
@@ -35,25 +45,54 @@ class App extends Component {
   });
  }
 
+ onRegister(e){
+  e.preventDefault();
+  firebase.auth()
+   .createUserWithEmailAndPassword(this.state.email, this.state.password)
+   .then(user => {
+    const newUser = {
+     email: user.email,
+     isAdmin: false
+    }
+    firebase.database().ref(`users/${user.uid}`).set(newUser);
+   });
+   console.log('Register');
+ }
+
   render() {
     return (
       <div>
         <Header />
-        {this.state.logged_in /*&& this.state.password === 'password'*/  ?
-        <Home_loggedin
-         changeStatus={this.onChangeStatus.bind(this)}
-         user={this.state.userName}
+        {this.props.user ?
+        <HomeLoggedIn
+         userInfo={this.state.user && this.state.user.email }
         />
         :
         <Home
-         changeStatus={this.onChangeStatus.bind(this)}
+         register={this.onRegister.bind(this)}
+         signIn={this.onSignIn.bind(this)}
          handleChange={this.onHandleUser.bind(this)}
          handlePassword={this.onHandlePassword.bind(this)}
+         error={this.state.error}
         />
         }
+        <div className="footercontent">
+         <Footer />
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+function mapDispatchToProps(dispatch){
+ return bindActionCreators(actions, dispatch)
+}
+
+function mapStateToProps(state){
+ return {
+   user: state.user
+ }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
